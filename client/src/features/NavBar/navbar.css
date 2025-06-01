@@ -10,7 +10,6 @@
     display: flex;
     gap: 10px;
     color: #84cc16;
-    size: 24px;
     font-weight: 500;
 }
 
@@ -23,7 +22,7 @@
     text-decoration: none;
     list-style: none;
     color: #000;
-    padding: 11px 33px;
+    padding: 11px 18px;
     background-color: #e4e4e733;
     border: transparent 1px solid;
 }
@@ -32,7 +31,7 @@
     text-decoration: none;
     list-style: none;
     color: #000;
-    padding: 11px 33px;
+    padding: 11px 18px;
     background-color: #e4e4e733;
     border-radius: 100px 0 0 100px;
 }
@@ -41,7 +40,7 @@
     text-decoration: none;
     list-style: none;
     color: #000;
-    padding: 11px 33px;
+    padding: 11px 18px;
     background-color: #e4e4e733;
     border-radius: 0 100px 100px 0;
 }
@@ -53,11 +52,11 @@
     color: #84cc16;
 }
 
-.active {
-    border: #84cc1680 1px solid;
-    background-color: #d9f99d33;
-    color: #84cc16;
-}
+/*.active {*/
+/*    border: #84cc1680 1px solid;*/
+/*    background-color: #d9f99d33;*/
+/*    color: #84cc16;*/
+/*}*/
 
 .navbar__links li.active {
     border: #84cc1680 1px solid;

@@ -1,14 +1,12 @@
 @import "tailwindcss";
+
 body {
-  margin: 1rem;
-  background-image: url("/bg.png");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-attachment: fixed;
-  background-repeat: stretch;
-  background-size: cover;
-  background-position: center;
-  font-family: "Space Grotesk", sans-serif;
-  font-optical-sizing: auto;
-  font-style: normal;
+    margin: 1rem;
+    background-image: url("/bg.png");
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    font-family: "Space Grotesk", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
 }

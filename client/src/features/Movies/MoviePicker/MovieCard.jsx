@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import "./movieCard.css";
 import {useDispatch, useSelector} from "react-redux";
-import {setSelectedMovie} from "../../movies/store";
+import {setSelectedMovie} from "../../store/store";
 
 export const MovieCard = ({movie}) => {
     const selectedMovie = useSelector((state) => state.app.selectedMovie);

@@ -1,6 +1,6 @@
 import {Grid} from "@mui/material";
 import {useDispatch, useSelector} from "react-redux";
-import {resetBookings} from "../../movies/store";
+import {resetBookings} from "../../store/store";
 
 const Summary = ({movie, screening}) => {
     const movies = useSelector(state => state.app.movies);

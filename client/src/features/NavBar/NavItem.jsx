@@ -3,7 +3,7 @@ import {
     setCurrentDay,
     setSelectedMovie,
     setSelectedScreening,
-} from "../movies/store";
+} from "../store/store";
 
 export const Navitem = ({index, classNames, day}) => {
     const dispatch = useDispatch();
@@ -11,7 +11,8 @@ export const Navitem = ({index, classNames, day}) => {
     return (
         <li
             key={index}
-            onClick={() => {
+            onClick={(e) => {
+                e.preventDefault();
                 dispatch(setCurrentDay(index + 1));
                 dispatch(setSelectedMovie(null));
                 dispatch(setSelectedScreening(null));

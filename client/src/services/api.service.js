@@ -17,26 +17,10 @@ export class ApiService {
         return this.instance;
     }
 
-    async getAll(url, body) {
-        const response = await fetch(`${this.#baseUrl}/${url}`, body);
-        if (!response.ok) {
-            throw new Error(response.statusText);
-        }
-        return await response.json();
-    };
-
-    async getById(url, id, body) {
-        const response = await fetch(`${this.#baseUrl}/${url}/${id}`, body);
-        if (!response.ok) {
-            throw new Error(response.statusText);
-        }
-        return await response.json();
-    };
-
-    async post(url, body) {
+    async get(url) {
+        const token = localStorage.getItem("token");
         const response = await fetch(`${this.#baseUrl}/${url}`, {
-            method: "POST",
-            ...body
+            Headers: new Headers({'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`}),
         });
         if (!response.ok) {
             throw new Error(response.statusText);
@@ -44,10 +28,48 @@ export class ApiService {
         return await response.json();
     };
 
-    async delete(url, id, body) {
+    async getById(url, id) {
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${this.#baseUrl}/${url}/${id}`, {
+            headers: new Headers({'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`})
+        });
+        if (!response.ok) {
+            throw new Error(response.statusText);
+        }
+        return await response.json();
+    };
+
+    async post(url, body) {
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${this.#baseUrl}/${url}`, {
+            method: "POST",
+            body: JSON.stringify(body),
+            headers: new Headers({'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`})
+        });
+        if (!response.ok) {
+            throw new Error(response.statusText);
+        }
+        return await response.json();
+    };
+
+    async put(url, body) {
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${this.#baseUrl}/${url}`, {
+            method: "PUT",
+            body: JSON.stringify(body),
+            Headers: new Headers({'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`})
+        });
+        if (!response.ok) {
+            throw new Error(response.statusText);
+        }
+        return await response.json();
+    };
+
+    async delete(url, id) {
+        const token = localStorage.getItem("token");
         const response = await fetch(`${this.#baseUrl}/${url}/${id}`, {
             method: 'DELETE',
-            ...body
+            Headers: new Headers({'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`})
         });
         if (!response.ok) {
             throw new Error(response.statusText);

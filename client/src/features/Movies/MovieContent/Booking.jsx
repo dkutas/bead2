@@ -5,7 +5,7 @@ import takenSear from "./../../../assets/takenseat.svg"; // Replace with your lo
 import {Counter} from "./utils/Counter";
 import classNames from "classnames";
 import {useDispatch, useSelector} from "react-redux";
-import {removeSelectedSeat, selectSeat} from "../../movies/store";
+import {removeSelectedSeat, selectSeat} from "../../store/store";
 import Summary from "./Summary";
 
 export const Booking = ({selectedScreening, selectedMovie: movie}) => {

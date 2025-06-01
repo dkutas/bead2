@@ -1,18 +1,15 @@
 import "./App.css";
-import NavBar from "./features/NavBar/Navbar";
-import {Main} from "./features/Main/Main";
 import {Provider, useDispatch} from "react-redux";
 import {ApiService} from "./services/api.service.js";
-import {setMovies} from "./features/movies/store.js";
+import {setMovies} from "./features/store/store.js";
+import {RouterProvider} from "react-router";
+import {router} from "./routes.js";
 
 function App() {
     const dispatch = useDispatch();
-    ApiService.getInstance().getAll('movies').then(data => dispatch(setMovies(data)));
+    ApiService.getInstance().get('movies').then(data => dispatch(setMovies(data)));
     return (
-        <>
-            <NavBar/>
-            <Main/>
-        </>
+        <RouterProvider router={router}/>
     );
 }
 

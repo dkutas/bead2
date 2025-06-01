@@ -2,7 +2,7 @@ import {Grid} from "@mui/material";
 import {useDispatch, useSelector} from "react-redux";
 import minus from "./../../../../assets/minus.svg"; // Replace with your logo path
 import plusz from "./../../../../assets/plus.svg"; // Replace with your logo path
-import {decrementBooking, incrementBooking} from "../../../movies/store";
+import {decrementBooking, incrementBooking} from "../../../store/store";
 
 export const Counter = ({type}) => {
     const dispatch = useDispatch();

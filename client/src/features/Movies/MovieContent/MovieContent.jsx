@@ -3,7 +3,7 @@ import {Booking} from "./Booking";
 import {useEffect} from "react";
 import classNames from "classnames";
 import {useDispatch, useSelector} from "react-redux";
-import {setSelectedScreening} from "../../movies/store";
+import {setSelectedScreening} from "../../store/store";
 import {getWeek, getWeekYear} from "date-fns";
 
 export const MovieContent = () => {

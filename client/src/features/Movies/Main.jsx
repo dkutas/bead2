@@ -3,12 +3,12 @@ import {MoviePicker} from "./MoviePicker/MoviePicker";
 import {MovieContent} from "./MovieContent/MovieContent";
 import {useDispatch, useSelector} from "react-redux";
 import {ApiService} from "../../services/api.service.js";
-import {setMovies} from "../movies/store.js";
+import {setMovies} from "../store/store.js";
 
 export const Main = () => {
 
     const dispatch = useDispatch()
-    ApiService.getInstance().getAll("movies").then((movies) => {
+    ApiService.getInstance().get("movies").then((movies) => {
         dispatch(setMovies(movies));
 
     })
