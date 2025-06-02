@@ -1,3 +1,8 @@
+import Navbar from "./Navbar.jsx";
+import {Outlet} from "react-router";
+
 export default function ManageFilms() {
-    return <>Hello</>
+    return <>
+        <Outlet/>
+    </>
 }

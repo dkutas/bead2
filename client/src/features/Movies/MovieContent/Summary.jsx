@@ -1,128 +1,250 @@
-import {Grid} from "@mui/material";
+import {Grid, Snackbar, Alert} from "@mui/material";
 import {useDispatch, useSelector} from "react-redux";
-import {resetBookings} from "../../store/store";
+import {resetBookings, setMovies} from "../../store/store";
+import {Dialog, Button} from "@mui/material";
+import {useState} from "react";
+import {AuthService} from "../../../services/auth.service.js";
+import {ApiService} from "../../../services/api.service.js";
+import {getWeek} from "date-fns";
 
-const Summary = ({movie, screening}) => {
-    const movies = useSelector(state => state.app.movies);
+const Summary = ({movie, screening, needFinalize}) => {
+
+    const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
     const mapper = {adult: "Felnőtt", student: "Diák", pension: "Nyugdíjas"};
     const bookings = useSelector((state) => state.app.bookings);
     const currentDay = useSelector(
         (state) => state.app.days[state.app.currentDay]
     );
+    const selectedWeek = getWeek(new Date(useSelector((state) => state.app.selectedDate)), {weekStartsOn: 1});
+
+
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success'
+    });
+
+    const mapToPostValue = (category) => {
+        switch (category) {
+            case "adult":
+                return "normal";
+            case "student":
+                return "student";
+            case "pension":
+                return "student";
+            default:
+                return "normal";
+        }
+    }
     const costs = {adult: 2500, student: 2000, pension: 1800};
     const selectedSeats = useSelector((state) => state.app.selectedSeats);
 
-    const finalizeBooking = () => {
-        const movieIndex = movies.findIndex((m) => m.id === movie.id);
-        const selectedScreeningIndex = movies[movieIndex].screenings.findIndex(
-            (s) => s.id === screening.id
-        );
-        console.log(movies[movieIndex].screenings[selectedScreeningIndex].bookings);
-        selectedSeats.forEach((seat) => {
-            movies[movieIndex].screenings[selectedScreeningIndex].bookings.push({
-                seat: seat.seat,
-                row: seat.row,
+    const handleSnackbarClose = () => {
+        setSnackbar({...snackbar, open: false});
+    };
+
+    const finalizeBooking = async () => {
+        const valueToPost = {
+            screening_id: screening.id,
+            seats: selectedSeats.map((seat) => ({row: seat.seat, number: seat.row})),
+            ticket_types: Object.entries(bookings)
+                .filter(([, number]) => number > 0)
+                .map(([category, number]) => ({
+                    type: mapToPostValue(category),
+                    quantity: number
+                }))
+        };
+
+        await ApiService.getInstance().post("bookings", valueToPost).then(response => {
+            console.log(response);
+            setSnackbar({
+                open: true,
+                message: 'Foglalás sikeresen létrehozva!',
+                severity: 'success'
             });
-        });
+        }).catch(error => {
+            console.log(error);
+            setSnackbar({
+                open: true,
+                message: 'Foglalás sikeresen létrehozva!',
+                severity: 'success'
+            });
+        })
+        try {
+            await ApiService.getInstance()
+                .get(`movies/week?week_number=${selectedWeek}`)
+                .then((movies) => {
+                    dispatch(setMovies(movies));
+                });
+        } catch (error) {
+            console.log(error);
+        }
 
         dispatch(resetBookings());
-
-        console.log(movies[movieIndex].screenings[selectedScreeningIndex].bookings);
-
-        // Logic to finalize the booking
-        // This could involve sending the booking data to a server or updating the state
-        // For now, we'll just log the booking data
-        console.log("Booking finalized:", {
-            movie,
-            bookings,
-            selectedSeats,
-        });
+        setOpen(false);
     };
 
     return (
-        <Grid
-            container
-            item
-            direction="row"
-            className="border-2 border-[#FAFAFA33] rounded-2xl backdrop-blur-[90.8px] p-4 mt-4"
-        >
-            <Grid
-                item
-                container
-                size={6}
-                direction="column"
-                className="justify-between"
-                sx={{paddingBottom: "10px"}}
-            >
-                <Grid sx={{paddingBottom: "10px"}} className="px-2">
-                    <h1 className="text-2xl ">{movie.title}</h1>
-                    <h2
-                        style={{
-                            fontWeight: "400",
-                            fontSize: "16px",
-                            lineHeight: "100%",
-                            letterSpacing: "0%",
-                            verticalAlign: "middle",
-                            color: "#A1A1AA",
-                        }}
-                    >
-                        {currentDay}
-                    </h2>
-                </Grid>
-                <div className="border-b-2 border-[#FAFAFA33] p-2 text-[#A1A1AA]">
-                    {Object.entries(bookings).map(([key, value]) => {
-                        if (value === 0) return null;
-
-                        return (
-                            <div className="flex justify-between" key={key}>
-                                <Grid>
-                                    {value}x {mapper[key]}
-                                </Grid>
-                                <Grid className="pr-2">{costs[key] * bookings[key]}Ft</Grid>
-                            </div>
-                        );
-                    })}
-                </div>
-                <div className="text-[#A1A1AA] border-b-2 border-[#FAFAFA33] ">
-                    <div className="p-2">Helyek</div>
-
-                    <div className="p-2 inline-block">
-                        {selectedSeats
-                            .map((seat) => `${seat.seat}.sor ${seat.row}. szék`)
-                            .join(", ")}
+        <>
+            <Dialog open={open} onClose={() => setOpen(false)}>
+                <div className="p-6 min-w-[400px]">
+                    <h2 className="text-2xl mb-4">Foglalás megerősítése</h2>
+                    <div className="border-b pb-4 mb-4">
+                        <div className="font-bold">{movie.title}</div>
+                        <div className="text-gray-600">{currentDay}</div>
+                    </div>
+                    <div className="space-y-2 border-b pb-4 mb-4">
+                        {Object.entries(bookings).map(([key, value]) => {
+                            if (value === 0) return null;
+                            return (
+                                <div className="flex justify-between" key={key}>
+                                    <span>{value}x {mapper[key]}</span>
+                                    <span>{costs[key] * bookings[key]} Ft</span>
+                                </div>
+                            );
+                        })}
+                        <div className="flex justify-between font-bold pt-2">
+                            <span>Összesen:</span>
+                            <span>
+                    {Object.entries(bookings).reduce(
+                        (acc, [key, value]) => acc + costs[key] * value,
+                        0
+                    )} Ft
+                </span>
+                        </div>
+                    </div>
+                    <div className="mb-4">
+                        <div className="font-bold mb-2">Kiválasztott helyek:</div>
+                        <div className="text-gray-600">
+                            {selectedSeats
+                                .map((seat) => `${seat.seat}.sor ${seat.row}. szék`)
+                                .join(", ")}
+                        </div>
+                    </div>
+                    <div className="flex justify-end gap-4">
+                        <Button
+                            className="px-4 py-2 rounded-lg border"
+                            onClick={() => {
+                                setOpen(false);
+                                finalizeBooking();
+                            }}
+                        >
+                            Mégsem
+                        </Button>
+                        <Button
+                            className="px-4 py-2 rounded-lg bg-[#84cc16] text-black"
+                            onClick={() => {
+                                finalizeBooking();
+                                setOpen(false);
+                            }}
+                        >
+                            Foglalás
+                        </Button>
                     </div>
                 </div>
-            </Grid>
+            </Dialog>
             <Grid
-                item
                 container
-                size={6}
-                direction="column"
-                className="justify-center items-end"
+                item
+                direction="row"
+                className="border-2 border-[#FAFAFA33] rounded-2xl backdrop-blur-[90.8px] p-4 mt-4"
             >
                 <Grid
                     item
-                    onClick={() => {
-                        finalizeBooking();
-                    }}
-                    sx={{
-                        borderRadius: "20px",
-                        paddingY: "10px",
-                        paddingX: "31px",
-                        backgroundColor: "#84cc16",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        display: "flex",
-                        color: "#1E1E1E",
-                        width: "fit-content",
-                        cursor: "pointer",
-                    }}
+                    container
+                    size={6}
+                    direction="column"
+                    className="justify-between"
+                    sx={{paddingBottom: "10px"}}
                 >
-                    Foglalás véglegesítése
+                    <Grid sx={{paddingBottom: "10px"}} className="px-2">
+                        <h1 className="text-2xl ">{movie.title}</h1>
+                        <h2
+                            style={{
+                                fontWeight: "400",
+                                fontSize: "16px",
+                                lineHeight: "100%",
+                                letterSpacing: "0%",
+                                verticalAlign: "middle",
+                                color: "#A1A1AA",
+                            }}
+                        >
+                            {currentDay}
+                        </h2>
+                    </Grid>
+                    <div className="border-b-2 border-[#FAFAFA33] p-2 text-[#A1A1AA]">
+                        {Object.entries(bookings).map(([key, value]) => {
+                            if (value === 0) return null;
+
+                            return (
+                                <div className="flex justify-between" key={key}>
+                                    <Grid>
+                                        {value}x {mapper[key]}
+                                    </Grid>
+                                    <Grid className="pr-2">{costs[key] * bookings[key]}Ft</Grid>
+                                </div>
+                            );
+                        })}
+                    </div>
+                    <div className="text-[#A1A1AA] border-b-2 border-[#FAFAFA33] ">
+                        <div className="p-2">Helyek</div>
+
+                        <div className="p-2 inline-block">
+                            {selectedSeats
+                                .map((seat) => `${seat.seat}.sor ${seat.row}. szék`)
+                                .join(", ")}
+                        </div>
+                    </div>
                 </Grid>
+                {
+                    needFinalize ?
+                        <Grid
+                            item
+                            container
+                            size={6}
+                            direction="column"
+                            className="justify-center items-end"
+                        >
+                            <Grid
+                                item
+                                onClick={() => {
+                                    setOpen(true);
+                                }}
+                                sx={{
+                                    borderRadius: "20px",
+                                    paddingY: "10px",
+                                    paddingX: "31px",
+                                    backgroundColor: "#84cc16",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    display: "flex",
+                                    color: "#1E1E1E",
+                                    width: "fit-content",
+                                    cursor: "pointer",
+                                }}
+                            >
+                                Foglalás véglegesítése
+                            </Grid>
+                        </Grid> : null
+                }
             </Grid>
-        </Grid>
+
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={6000}
+                onClose={handleSnackbarClose}
+                anchorOrigin={{vertical: 'top', horizontal: 'center'}}
+            >
+                <Alert
+                    onClose={handleSnackbarClose}
+                    severity={snackbar.severity}
+                    sx={{width: '100%'}}
+                >
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
+        </>
     );
 };
 

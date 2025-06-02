@@ -1,9 +1,10 @@
 import {useDispatch} from "react-redux";
 import {
-    setCurrentDay,
+    setCurrentDay, setSelectedDate,
     setSelectedMovie,
     setSelectedScreening,
 } from "../store/store";
+import {format, getWeek} from "date-fns";
 
 export const Navitem = ({index, classNames, day}) => {
     const dispatch = useDispatch();
@@ -16,10 +17,11 @@ export const Navitem = ({index, classNames, day}) => {
                 dispatch(setCurrentDay(index + 1));
                 dispatch(setSelectedMovie(null));
                 dispatch(setSelectedScreening(null));
+                dispatch(setSelectedDate(day.toISOString()));
             }}
             className={classNames}
         >
-            <a>{day}</a>
+            <a>{format(day, 'EEEE')}</a>
         </li>
     );
 };

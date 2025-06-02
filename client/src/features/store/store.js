@@ -2,6 +2,7 @@ import {configureStore, createSlice} from "@reduxjs/toolkit";
 
 const initState = {
     movies: [],
+    selectedDate: new Date().toISOString(),
     selectedMovie: null,
     selectedScreening: null,
     currentDay: 1,
@@ -9,6 +10,7 @@ const initState = {
     bookingsCount: 0,
     totalPrice: 0,
     selectedSeats: [],
+    myBookings: [],
     days: [
         "Monday",
         "Tuesday",
@@ -29,6 +31,9 @@ const appSlice = createSlice({
         },
         setSelectedScreening: (state, action) => {
             state.selectedScreening = action.payload;
+        },
+        setSelectedDate: (state, action) => {
+            state.selectedDate = action.payload;
         },
         setCurrentDay: (state, action) => {
             state.currentDay = action.payload;
@@ -74,6 +79,9 @@ const appSlice = createSlice({
         },
         setMovies: (state, action) => {
             state.movies = action.payload;
+        },
+        setMyBookings(state, action) {
+            state.myBookings = action.payload;
         }
     },
 });
@@ -87,7 +95,10 @@ export const {
     selectSeat,
     incrementBooking,
     removeSelectedSeat,
-    setMovies
+    setMovies,
+    setSelectedDate,
+    setMyBookings
+
 } = appSlice.actions;
 export const selectSelectedMovie = (state) => state.app.selectedMovie;
 export const selectSelectedScreening = (state) => state.app.selectedScreening;
@@ -97,3 +108,4 @@ export const store = configureStore({
         app: appSlice.reducer,
     },
 });
+

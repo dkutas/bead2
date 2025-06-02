@@ -1,8 +1,7 @@
 import {ApiService} from "./api.service.js";
 
 export class AuthService {
-    #user
-    #token
+    #user;
     static instance;
 
 
@@ -10,7 +9,6 @@ export class AuthService {
         if (AuthService.instance) {
             return AuthService.instance;
         }
-
         AuthService.instance = this;
     }
 
@@ -21,41 +19,36 @@ export class AuthService {
         return this.instance;
     }
 
+    isAdmin() {
+        return this.#user && this.#user.role === "admin";
+    }
+
     isAuthenticated() {
         return localStorage.getItem("token") !== null;
     }
 
     async login(credentials) {
         ApiService.getInstance().post("login", credentials).then(response => {
-            console.log(response);
-            this.user = response.data.user;
-            this.token = response.data.token;
+            this.#user = response.data.user;
             localStorage.setItem("token", response.data.token.split("|")[1]);
+            localStorage.setItem("userName", response.data.user.name);
         });
 
     }
 
     async logout(onLogout) {
-        this.token = null;
-        this.user = null;
+        this.#user = null;
         localStorage.removeItem("token");
+        localStorage.removeItem("userName");
         onLogout()
     }
 
     async register(userData) {
         ApiService.getInstance().post("register", userData).then(response => {
-            this.user = response.data.user;
-            this.token = response.data.token;
+            this.#user = response.data.user;
             localStorage.setItem("token", response.data.token.split("|")[1]);
+            localStorage.setItem("userName", response.data.user.name);
         })
-    }
-
-    getUser() {
-        return this.#user;
-    }
-
-    getToken() {
-        return this.#token;
     }
 
 

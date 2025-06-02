@@ -219,7 +219,7 @@ export const Booking = ({selectedScreening, selectedMovie: movie}) => {
             {!selectedSeats ||
             !bookingsCount ||
             selectedSeats.length < bookingsCount ? null : (
-                <Summary movie={movie} screening={selectedScreening}/>
+                <Summary movie={movie} screening={selectedScreening} needFinalize/>
             )}
         </>
     );

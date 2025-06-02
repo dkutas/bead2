@@ -4,7 +4,7 @@ import {useEffect} from "react";
 import classNames from "classnames";
 import {useDispatch, useSelector} from "react-redux";
 import {setSelectedScreening} from "../../store/store";
-import {getWeek, getWeekYear} from "date-fns";
+import {getWeek} from "date-fns";
 
 export const MovieContent = () => {
     const movie = useSelector(state => state.app.movies[state.app.selectedMovie - 1]);
@@ -55,7 +55,7 @@ export const MovieContent = () => {
                     <h2>{movie.description}</h2>
                     <div className="flex flex-row gap-2">
                         {movie.screenings
-                            .filter((screening) => screening.week_day === currentDay && screening.week_number === getWeek(new Date()) + 1)
+                            .filter((screening) => screening.week_day === currentDay)
                             .sort(
                                 (a, b) =>
                                     new Date(`1970-01-01T${a.start_time}`) -

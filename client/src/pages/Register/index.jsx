@@ -21,7 +21,7 @@ export default function Register() {
                 password,
                 password_confirmation: passwordAgain
             })
-            navigate("/movies");
+            navigate("/");
         } catch (err) {
             console.log(err);
             setError(err);
@@ -33,19 +33,36 @@ export default function Register() {
         <h2 className="text-[36px] font-[700]">
             Register
         </h2>
-        <TextField variant="filled" label="E-mail" className="w-lg" type="email" value={email}
-                   onChange={(e) => setEmail(e.target.value)}
-                   required/>
-        <TextField variant="filled" label="Name" className="w-lg" type="text" value={name}
-                   onChange={(e) => setName(e.target.value)}
-                   required/>
-        <TextField variant="filled" label="Password" className="w-lg" type="password" value={password}
-                   onChange={(e) => setPassword(e.target.value)} required/>
-        <TextField variant="filled" label="Password again" error={errors.length > 0} className="w-lg" type="password"
-                   value={passwordAgain}
-                   helperText={errors.join(" ")}
-                   onChange={(e) => setPasswordAgain(e.target.value)} required/>
-        <Button variant="contained" color="primary" type="submit"
-                onClick={handleRegister}>Register</Button>
+        <TextField
+            sx={{
+                backgroundColor: 'white',
+            }}
+            variant="filled" label="E-mail" className="w-lg" type="email" value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required/>
+        <TextField
+            sx={{
+                backgroundColor: 'white',
+            }}
+            variant="filled" label="Name" className="w-lg" type="text" value={name}
+            onChange={(e) => setName(e.target.value)}
+            required/>
+        <TextField
+            sx={{
+                backgroundColor: 'white',
+            }}
+            variant="filled" label="Password" className="w-lg" type="password" value={password}
+            onChange={(e) => setPassword(e.target.value)} required/>
+        <TextField
+            sx={{
+                backgroundColor: 'white',
+            }}
+            variant="filled" label="Password again" error={errors.length > 0} className="w-lg" type="password"
+            value={passwordAgain}
+            helperText={errors.join(" ")}
+            onChange={(e) => setPasswordAgain(e.target.value)} required/>
+        <Button
+            variant="contained" color="primary" type="submit"
+            onClick={handleRegister}>Register</Button>
     </div>
 }

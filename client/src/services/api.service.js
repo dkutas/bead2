@@ -20,7 +20,7 @@ export class ApiService {
     async get(url) {
         const token = localStorage.getItem("token");
         const response = await fetch(`${this.#baseUrl}/${url}`, {
-            Headers: new Headers({'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`}),
+            headers: new Headers({'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`}),
         });
         if (!response.ok) {
             throw new Error(response.statusText);

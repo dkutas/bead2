@@ -7,6 +7,7 @@
       <sourceFolder url="file://$MODULE_DIR$/server/database/factories" isTestSource="false" packagePrefix="Database\Factories\" />
       <sourceFolder url="file://$MODULE_DIR$/server/database/seeders" isTestSource="false" packagePrefix="Database\Seeders\" />
       <sourceFolder url="file://$MODULE_DIR$/server/tests" isTestSource="true" packagePrefix="Tests\" />
+      <sourceFolder url="file://$MODULE_DIR$/client/node_modules" type="java-resource" />
       <excludeFolder url="file://$MODULE_DIR$/server/vendor/brick/math" />
       <excludeFolder url="file://$MODULE_DIR$/server/vendor/carbonphp/carbon-doctrine-types" />
       <excludeFolder url="file://$MODULE_DIR$/server/vendor/composer" />
@@ -120,7 +121,15 @@
       <excludeFolder url="file://$MODULE_DIR$/server/vendor/voku/portable-ascii" />
       <excludeFolder url="file://$MODULE_DIR$/server/vendor/webmozart/assert" />
     </content>
+    <content url="file://$MODULE_DIR$/client/node_modules" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+  <component name="TemplatesService">
+    <option name="TEMPLATE_FOLDERS">
+      <list>
+        <option value="$MODULE_DIR$/client/node_modules" />
+      </list>
+    </option>
   </component>
 </module>

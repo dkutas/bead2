@@ -12,7 +12,7 @@ export const LoginPage = () => {
         e.preventDefault()
         try {
             AuthService.getInstance().login({email, password})
-            navigate("/movies")
+            navigate("/")
         } catch (error) {
             console.error("Login failed:", error);
         }
@@ -23,12 +23,36 @@ export const LoginPage = () => {
         <h2 className="text-[36px] font-[700]">
             Login
         </h2>
-        <TextField label="Email" variant="filled" className="w-lg" type="email" value={email}
-                   onChange={(e) => setEmail(e.target.value)}/>
-        <TextField label="Password" variant="filled" className="w-lg" type="password" value={password}
-                   onChange={(e) => setPassword(e.target.value)}/>
-        <Button variant="contained" color="primary" type="submit"
-                onClick={handleLogin}>Login</Button>
+        <TextField
+            label="Email"
+            variant="filled"
+            className="w-lg"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            sx={{
+                backgroundColor: 'white',
+            }}
+        />
+        <TextField
+            label="Password"
+            variant="filled"
+            className="w-lg"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            sx={{
+                backgroundColor: 'white',
+            }}
+        />
+        <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            onClick={handleLogin}
+        >
+            Login
+        </Button>
     </form>
 }
 
