@@ -2,17 +2,22 @@ import {useState} from "react";
 import {Button, TextField} from "@mui/material";
 import {AuthService} from "../../services/auth.service.js";
 import {useNavigate} from "react-router";
+import {useContext} from "react";
+import {AuthContext} from "../../contexts/AuthContext"; // You'll need to create this
 
 export const LoginPage = () => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const navigate = useNavigate()
+    const {setIsAuthenticated} = useContext(AuthContext); // Add this
 
     const handleLogin = (e) => {
         e.preventDefault()
         try {
-            AuthService.getInstance().login({email, password})
-            navigate("/")
+            AuthService.getInstance().login({email, password}).then(response => {
+                setIsAuthenticated(true)
+                navigate("/")
+            })
         } catch (error) {
             console.error("Login failed:", error);
         }

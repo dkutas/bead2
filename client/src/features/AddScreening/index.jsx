@@ -7,19 +7,22 @@ import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
 import {ApiService} from "../../services/api.service.js";
 import {useNavigate} from "react-router";
 import dayjs from 'dayjs';
+import {useLocation} from "react-router";
 
-export default function AddBooking() {
+export default function AddScreening() {
     const navigate = useNavigate();
     const [movies, setMovies] = useState([]);
+    const [rooms, setRooms] = useState([]);
+    const location = useLocation();
+    const movieId = +location.search.split("=")[1];
     const [formData, setFormData] = useState({
-        movie_id: "",
-        room: "",
+        movie_id: movieId || "",
+        room_id: "",
         date: null,
         start_time: null
     });
     const [errors, setErrors] = useState({});
 
-    const rooms = ["Room 1", "Room 2", "Room 3", "Room 4"];
 
     useEffect(() => {
         const fetchMovies = async () => {
@@ -31,11 +34,23 @@ export default function AddBooking() {
                 console.error("Error fetching movies:", error);
             }
         };
+        const fetchRooms = async () => {
+            try {
+                await ApiService.getInstance().get("rooms").then((response) => {
+                    setRooms(response);
+                });
+            } catch (error) {
+                console.error("Error fetching rooms:", error);
+            }
+        };
         fetchMovies();
+        fetchRooms()
     }, []);
+
 
     const handleChange = (e) => {
         const {name, value} = e.target;
+        console.log(name, value)
         setFormData(prev => ({...prev, [name]: value}));
         setErrors(prev => ({...prev, [name]: ""}));
     };
@@ -43,7 +58,7 @@ export default function AddBooking() {
     const validateForm = () => {
         const newErrors = {};
         if (!formData.movie_id) newErrors.movie_id = "Movie is required";
-        if (!formData.room) newErrors.room = "Room is required";
+        if (!formData.room_id) newErrors.room = "Room is required";
         if (!formData.date) newErrors.date = "Date is required";
         if (!formData.start_time) newErrors.start_time = "Start time is required";
 
@@ -68,9 +83,8 @@ export default function AddBooking() {
             console.error("Error adding screening:", error);
         }
     };
-    console.log(movies)
     return (
-        <Container maxWidth="sm" className="mt-8">
+        <Container maxWidth="md" className="mt-8">
             <Paper elevation={3} className="p-8">
                 <Typography variant="h4" className="mb-4 text-center">
                     Add New Screening
@@ -109,9 +123,9 @@ export default function AddBooking() {
                     <TextField
                         select
                         label="Room"
-                        name="room"
+                        name="room_id"
                         variant="filled"
-                        value={formData.room}
+                        value={formData.room_id}
                         onChange={handleChange}
                         error={!!errors.room}
                         helperText={errors.room}
@@ -129,9 +143,9 @@ export default function AddBooking() {
                             }
                         }}
                     >
-                        {rooms.map((room) => (
-                            <MenuItem key={room} value={room}>
-                                {room}
+                        {rooms?.map((room) => (
+                            <MenuItem key={room} value={room.id}>
+                                {room.name}
                             </MenuItem>
                         ))}
                     </TextField>

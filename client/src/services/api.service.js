@@ -57,7 +57,7 @@ export class ApiService {
         const response = await fetch(`${this.#baseUrl}/${url}`, {
             method: "PUT",
             body: JSON.stringify(body),
-            Headers: new Headers({'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`})
+            headers: new Headers({'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`})
         });
         if (!response.ok) {
             throw new Error(response.statusText);
@@ -69,7 +69,7 @@ export class ApiService {
         const token = localStorage.getItem("token");
         const response = await fetch(`${this.#baseUrl}/${url}/${id}`, {
             method: 'DELETE',
-            Headers: new Headers({'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`})
+            headers: new Headers({'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`})
         });
         if (!response.ok) {
             throw new Error(response.statusText);

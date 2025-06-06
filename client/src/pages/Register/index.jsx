@@ -1,7 +1,8 @@
-import {useState} from "react";
-import {Button, TextField, Typography} from "@mui/material";
+import {useContext, useState} from "react";
+import {Button, TextField} from "@mui/material";
 import {AuthService} from "../../services/auth.service.js";
 import {useNavigate} from "react-router";
+import {AuthContext} from "../../contexts/AuthContext.jsx";
 
 export default function Register() {
     const [email, setEmail] = useState("")
@@ -9,6 +10,8 @@ export default function Register() {
     const [password, setPassword] = useState("")
     const [passwordAgain, setPasswordAgain] = useState("")
     const [errors, setError] = useState([]);
+    const {setIsAuthenticated} = useContext(AuthContext); // Add this
+
 
     const navigate = useNavigate();
 
@@ -20,8 +23,10 @@ export default function Register() {
                 name,
                 password,
                 password_confirmation: passwordAgain
+            }).then(() => {
+                setIsAuthenticated(true)
+                navigate("/");
             })
-            navigate("/");
         } catch (err) {
             console.log(err);
             setError(err);

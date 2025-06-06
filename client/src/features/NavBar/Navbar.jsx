@@ -2,18 +2,22 @@ import "./navbar.css";
 import logo from "./../../assets/logo.svg";
 import {NavLink, useNavigate} from "react-router";
 import {AuthService} from "../../services/auth.service.js";
+import {useContext} from 'react';
+import {AuthContext} from './../../contexts/AuthContext';
 
 const NavBar = () => {
+    const {isAuthenticated, setIsAuthenticated} = useContext(AuthContext);
+    const isAdmin = localStorage.getItem("role") !== null && localStorage.getItem("role") === "admin";
 
     const navigate = useNavigate()
 
     const handleLogout = () => {
-        AuthService.getInstance().logout(() => navigate('/'))
+        AuthService.getInstance().logout(() => navigate('/')).then(() => {
+            setIsAuthenticated(false)
+            navigate("/")
+        })
     }
 
-    if (AuthService.getInstance().isAuthenticated()) {
-        console.log(AuthService.getInstance())
-    }
 
     return (
         <nav className="px-4 py-2 flex gap-10 content-center justify-between items-center ">
@@ -23,21 +27,22 @@ const NavBar = () => {
                     <h1>TIKERA</h1>
                 </NavLink>
                 {
-                    AuthService.getInstance().isAuthenticated() ?
+                    isAuthenticated ?
                         (
                             <>
                                 <NavLink to={'/my-bookings'}>My Bookings</NavLink>
-                                {AuthService.getInstance().isAdmin() ?
-                                    <NavLink to={'/manage-films'}>Manage films</NavLink> : null}
+                                {isAdmin ?
+                                    <NavLink to={'/manage-films'}>Manage films</NavLink>
+                                    : null}
                             </>
                         )
                         : null
                 }
             </div>
             <div>
-                <h1 className="text-[#84cc16]">{AuthService.getInstance().isAuthenticated() ? (localStorage.getItem("userName")) : null}</h1>
+                <h1 className="text-[#84cc16]">{isAuthenticated ? (localStorage.getItem("name")) : null}</h1>
             </div>
-            <div>{AuthService.getInstance().isAuthenticated() ? (
+            <div>{isAuthenticated ? (
                 <NavLink className="text-[#84cc16]" to={"/"} onClick={handleLogout}>
                     Logout
                 </NavLink>

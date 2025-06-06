@@ -1,81 +1,200 @@
-import {ApiService} from "../../services/api.service.js";
 import {useEffect} from "react";
-import {Grid} from "@mui/material";
 import {useDispatch, useSelector} from "react-redux";
+import {Container, Typography, Paper, Grid, Box} from "@mui/material";
+import {ApiService} from "../../services/api.service.js";
 import {setMyBookings} from "../../features/store/store.js";
+import dayjs from 'dayjs';
 
 export default function MyBookings() {
     const dispatch = useDispatch();
+    const myBookings = useSelector((state) => state.app.myBookings);
+    const mapper = {normal: "Felnőtt", student: "Diák"};
+
     useEffect(() => {
         ApiService.getInstance().get("bookings").then((response) => {
             dispatch(setMyBookings(response));
-        })
-    }, []);
-    const mapper = {normal: "Felnőtt", student: "Diák"};
-    const myBookings = useSelector((state) => state.app.myBookings);
-    const bookings = {};
-    
-    return <div className="p-5 m-8">
-        <h1 className="text-4xl p-3 text-white">Foglalásaim</h1>
-        <h2 className="text-3xl p-3 text-white mt-8">Közelgő foglalások</h2>
-        <div>
-            {myBookings.filter(booking => new Date(booking.screening.start_time) > new Date()).map((booking) => (<Grid
-                container
-                item
-                direction="row"
-                className="border-2 border-[#FAFAFA33] rounded-2xl backdrop-blur-[90.8px] p-4 mt-4"
+        });
+    }, [dispatch]);
+
+    const upcomingBookings = myBookings.filter(booking =>
+        new Date(booking.screening.start_time) > new Date()
+    );
+
+    const pastBookings = myBookings.filter(booking => {
+            console.log(new Date(booking.screening.start_time));
+            return new Date(booking.screening.start_time) <= new Date()
+        }
+    );
+
+    const BookingCard = ({booking, isPast}) => (
+        <Grid item xs={12} sm={6} md={4} p={5}>
+            <Paper
+                elevation={3}
+                sx={{
+                    p: 3,
+                    height: '100%',
+                    width: '100%', // Take full width of grid item
+                    display: 'flex',
+                    flexDirection: 'row',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(90.8px)',
+                    border: '2px solid rgba(250, 250, 250, 0.2)',
+                    borderRadius: '16px',
+                    opacity: isPast ? 0.8 : 1,
+                }}
             >
-                <Grid
-                    item
-                    container
-                    size={6}
-                    direction="column"
-                    className="justify-between"
-                    sx={{paddingBottom: "10px"}}
-                >
-                    <Grid sx={{paddingBottom: "10px"}} className="px-2">
-                        <h1 className="text-2xl ">{booking.screening.movie.title}</h1>
-                        <h2
-                            style={{
-                                fontWeight: "400",
-                                fontSize: "16px",
-                                lineHeight: "100%",
-                                letterSpacing: "0%",
-                                verticalAlign: "middle",
-                                color: "#A1A1AA",
-                            }}
-                        >
-                            {booking.screening.date}
-                        </h2>
-                    </Grid>
-                    <div className="border-b-2 border-[#FAFAFA33] p-2 text-[#A1A1AA]">
-                        {Object.entries(bookings).map(([key, value]) => {
-                            if (value === 0) return null;
+                <div className="flex flex-col justify-between mr-4 flex-nowrap" style={{width: '250px'}}>
 
-                            return (
-                                <div className="flex justify-between" key={key}>
-                                    <Grid>
-                                        {value}x {mapper[key]}
-                                    </Grid>
-                                    <Grid className="pr-2">{costs[key] * bookings[key]}Ft</Grid>
-                                </div>
-                            );
+
+                    <Typography variant="h5" component="h2" sx={{color: 'white', mb: 1}}>
+                        {booking.screening.movie.title}
+                    </Typography>
+
+                    <Typography sx={{color: '#A1A1AA', mb: 2}}>
+                        {dayjs(booking.screening.date).format('YYYY-MM-DD')} at{' '}
+                        {dayjs(booking.screening.start_time).format('HH:mm')}
+                    </Typography>
+
+                    <Typography sx={{color: '#A1A1AA', mb: 1}}>
+                        Room: {booking.screening.room.name}
+                    </Typography>
+
+                    <Box sx={{
+                        borderTop: '1px solid rgba(250, 250, 250, 0.2)',
+                        pt: 2,
+                        mt: 'auto'
+                    }}>
+                        <Typography sx={{color: '#A1A1AA', mb: 1}}>
+                            Tickets:
+                        </Typography>
+                        {booking.ticket_types.map(({type, quantity}) => {
+                            return (quantity > 0 && (
+                                <Typography
+                                    key={type}
+                                    sx={{color: '#A1A1AA'}}
+                                >
+                                    {quantity}x {mapper[type]}
+                                </Typography>
+                            ))
                         })}
-                    </div>
-                    <div className="text-[#A1A1AA] border-b-2 border-[#FAFAFA33] ">
-                        <div className="p-2">Helyek</div>
+                    </Box>
+                    <Box sx={{
+                        borderTop: '1px solid rgba(250, 250, 250, 0.2)',
+                        pt: 2,
+                        mt: 'auto'
+                    }}>
+                        <Typography sx={{color: '#A1A1AA', mb: 1}}>
+                            Seats:
+                        </Typography>
+                        {booking.seats.map(({row, number}) => {
+                            return (
+                                <Typography
+                                    key={`${row}` + `${number}`}
+                                    sx={{color: '#A1A1AA'}}
+                                >
+                                    {row}.sor <strong>{number}.szék</strong>
+                                </Typography>
+                            )
+                        })}
+                    </Box>
+                </div>
+                <Box
+                    component="img"
+                    src={booking.screening.movie.image_path}
+                    alt={booking.screening.movie.title}
+                    sx={{
+                        width: '300px',
+                        height: '400px',
+                        objectFit: 'cover',
+                        borderRadius: '8px',
+                        filter: isPast ? 'grayscale(100%)' : 'none',
+                        transition: 'filter 0.3s ease',
 
-                        <div className="p-2 inline-block">
-                            {selectedSeats
-                                .map((seat) => `${seat.seat}.sor ${seat.row}. szék`)
-                                .join(", ")}
-                        </div>
-                    </div>
+                    }}
+                />
+            </Paper>
+        </Grid>
+    );
+
+    return (
+        <Container maxWidth="lg" sx={{mt: 8, mb: 8}}>
+            <Typography
+                variant="h4"
+                component="h1"
+                sx={{color: 'white', mb: 4}}
+            >
+                My Bookings
+            </Typography>
+
+            <Typography
+                variant="h5"
+                component="h2"
+                sx={{color: 'white', mb: 3}}
+            >
+                Upcoming Bookings
+            </Typography>
+            <Box sx={{
+                mb: 6,
+                overflowX: 'auto',
+                '&::-webkit-scrollbar': {
+                    height: '8px'
+                },
+                '&::-webkit-scrollbar-track': {
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '4px'
+                },
+                '&::-webkit-scrollbar-thumb': {
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    borderRadius: '4px',
+                    '&:hover': {
+                        background: 'rgba(255, 255, 255, 0.3)'
+                    }
+                }
+            }}
+            >
+                <Grid container wrap="nowrap" spacing={3} sx={{
+                    mb: 6,
+                    pr: 2,
+                    width: 'max-content'
+                }}>
+                    {upcomingBookings.map((booking) => (
+                        <BookingCard key={booking.id} booking={booking}/>
+                    ))}
                 </Grid>
-            </Grid>))
-            }
-        </div>
-        <h2 className="text-3xl p-3 text-white">Elmúlt foglalások foglalások</h2>
-    </div>
+            </Box>
 
+            <Typography
+                variant="h5"
+                component="h2"
+                sx={{color: 'white', mb: 3}}
+            >
+                Past Bookings
+            </Typography>
+            <Box sx={{
+                mb: 6,
+                overflowX: 'auto',
+                '&::-webkit-scrollbar': {
+                    height: '8px'
+                },
+                '&::-webkit-scrollbar-track': {
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '4px'
+                },
+                '&::-webkit-scrollbar-thumb': {
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    borderRadius: '4px',
+                    '&:hover': {
+                        background: 'rgba(255, 255, 255, 0.3)'
+                    }
+                }
+            }}
+            >
+                <Grid container spacing={3}>
+                    {pastBookings.map((booking) => (
+                        <BookingCard key={booking.id} booking={booking} isPast/>
+                    ))}
+                </Grid>
+            </Box>
+        </Container>
+    );
 }

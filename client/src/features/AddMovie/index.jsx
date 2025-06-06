@@ -1,7 +1,8 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {TextField, Button, Container, Paper, Typography, MenuItem} from "@mui/material";
 import {ApiService} from "../../services/api.service.js";
 import {useNavigate} from "react-router";
+import {useLocation} from "react-router";
 
 export default function AddMovie() {
     const navigate = useNavigate();
@@ -10,10 +11,29 @@ export default function AddMovie() {
         description: "",
         duration: "",
         genre: "",
-        year: "",
-        image_url: ""
+        release_year: "",
+        image_path: ""
     });
     const [errors, setErrors] = useState({});
+    const location = useLocation();
+    const movieId = +location.search.split("=")[1];
+
+    useEffect(() => {
+        if (movieId) {
+            ApiService.getInstance().get(`movies/${movieId}`).then((response) => {
+                setFormData({
+                    title: response.title,
+                    description: response.description,
+                    duration: response.duration,
+                    genre: response.genre,
+                    release_year: response.release_year,
+                    image_path: response.image_path
+                });
+            }).catch((error) => {
+                console.error("Error fetching movie details:", error);
+            });
+        }
+    }, [])
 
     const genres = [
         "Action", "Comedy", "Drama", "Horror", "Sci-Fi",
@@ -32,8 +52,8 @@ export default function AddMovie() {
         if (!formData.description) newErrors.description = "Description is required";
         if (!formData.duration) newErrors.duration = "Duration is required";
         if (!formData.genre) newErrors.genre = "Genre is required";
-        if (!formData.year) newErrors.year = "Year is required";
-        if (!formData.image_url) newErrors.image_url = "Image URL is required";
+        if (!formData.release_year) newErrors.year = "Year is required";
+        if (!formData.image_path) newErrors.image_url = "Image URL is required";
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -44,7 +64,11 @@ export default function AddMovie() {
         if (!validateForm()) return;
 
         try {
-            await ApiService.getInstance().post("movies", formData);
+            if (movieId) {
+                await ApiService.getInstance().put(`movies/${movieId}`, formData);
+            } else {
+                await ApiService.getInstance().post("movies", formData);
+            }
             navigate("/manage-films");
         } catch (error) {
             console.error("Error adding movie:", error);
@@ -158,10 +182,10 @@ export default function AddMovie() {
                     </TextField>
                     <TextField
                         label="Year"
-                        name="year"
+                        name="release_year"
                         variant="filled"
                         type="number"
-                        value={formData.year}
+                        value={formData.release_year}
                         onChange={handleChange}
                         error={!!errors.year}
                         helperText={errors.year}
@@ -181,9 +205,9 @@ export default function AddMovie() {
                     />
                     <TextField
                         label="Image URL"
-                        name="image_url"
+                        name="image_path"
                         variant="filled"
-                        value={formData.image_url}
+                        value={formData.image_path}
                         onChange={handleChange}
                         error={!!errors.image_url}
                         helperText={errors.image_url}

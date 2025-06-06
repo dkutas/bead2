@@ -7,6 +7,7 @@ import {store} from "./features/store/store.js";
 import {createTheme, ThemeProvider} from "@mui/material";
 import {RouterProvider} from "react-router";
 import {router} from "./routes.js";
+import {AuthProvider} from "./contexts/AuthContext.jsx";
 
 const theme = createTheme({
     palette: {
@@ -20,9 +21,11 @@ const theme = createTheme({
 createRoot(document.getElementById("root")).render(
     <StrictMode>
         <ThemeProvider theme={theme}>
-            <Provider store={store}>
-                <RouterProvider router={router}/>
-            </Provider>
+            <AuthProvider>
+                <Provider store={store}>
+                    <RouterProvider router={router}/>
+                </Provider>
+            </AuthProvider>
         </ThemeProvider>
     </StrictMode>
 );

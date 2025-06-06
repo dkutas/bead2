@@ -9,6 +9,7 @@ function App() {
     const dispatch = useDispatch();
     ApiService.getInstance().get('movies').then(data => dispatch(setMovies(data)));
     return (
+
         <RouterProvider router={router}/>
     );
 }

@@ -11,6 +11,7 @@ const initState = {
     totalPrice: 0,
     selectedSeats: [],
     myBookings: [],
+    user: {},
     days: [
         "Monday",
         "Tuesday",
@@ -47,6 +48,9 @@ const appSlice = createSlice({
             const bookingType = action.payload;
             state.bookings[bookingType] = state.bookings[bookingType] + 1;
             state.bookingsCount = state.bookingsCount + 1;
+        },
+        setUser: (state, action) => {
+            state.user = action.payload;
         },
         decrementBooking: (state, action) => {
             const bookingType = action.payload;
@@ -97,7 +101,8 @@ export const {
     removeSelectedSeat,
     setMovies,
     setSelectedDate,
-    setMyBookings
+    setMyBookings,
+    setUser,
 
 } = appSlice.actions;
 export const selectSelectedMovie = (state) => state.app.selectedMovie;

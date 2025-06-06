@@ -28,10 +28,11 @@ export class AuthService {
     }
 
     async login(credentials) {
-        ApiService.getInstance().post("login", credentials).then(response => {
+        return ApiService.getInstance().post("login", credentials).then(response => {
             this.#user = response.data.user;
             localStorage.setItem("token", response.data.token.split("|")[1]);
-            localStorage.setItem("userName", response.data.user.name);
+            localStorage.setItem("name", response.data.user.name);
+            localStorage.setItem("role", response.data.user.role);
         });
 
     }
@@ -39,15 +40,17 @@ export class AuthService {
     async logout(onLogout) {
         this.#user = null;
         localStorage.removeItem("token");
-        localStorage.removeItem("userName");
+        localStorage.removeItem("name");
+        localStorage.removeItem("role");
         onLogout()
     }
 
     async register(userData) {
-        ApiService.getInstance().post("register", userData).then(response => {
+        return ApiService.getInstance().post("register", userData).then(response => {
             this.#user = response.data.user;
             localStorage.setItem("token", response.data.token.split("|")[1]);
-            localStorage.setItem("userName", response.data.user.name);
+            localStorage.setItem("name", response.data.user.name);
+            localStorage.setItem("role", response.data.user.role);
         })
     }
 
