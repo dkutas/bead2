@@ -94,12 +94,12 @@ export const MoviePicker = () => {
                         }}
                     >
                         {movies
-                            .filter((movie) =>
+                            ?.filter((movie) =>
                                 movie?.screenings.some(
                                     (screening) => screening.week_day === day
                                 )
                             )
-                            .map((movie) => (
+                            ?.map((movie) => (
                                 <MovieCard key={movie.id} movie={movie}/>
                             ))}
                     </Box>

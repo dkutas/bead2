@@ -54,14 +54,12 @@ export const MovieContent = () => {
                     <h2>{movie.release_year}</h2>
                     <h2>{movie.description}</h2>
                     <div className="flex flex-row gap-2">
-                        {movie.screenings
-                            .filter((screening) => screening.week_day === currentDay)
+                        {movie?.screenings?.filter((screening) => screening.week_day === currentDay)
                             .sort(
                                 (a, b) =>
                                     new Date(`1970-01-01T${a.start_time}`) -
                                     new Date(`1970-01-01T${b.start_time}`)
-                            )
-                            .map((screening) => {
+                            )?.map((screening) => {
                                 const classes = classNames(
                                     "px-1 py-0.5",
                                     "rounded-lg",

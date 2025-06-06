@@ -48,9 +48,8 @@ const Summary = ({movie, screening, needFinalize}) => {
         const valueToPost = {
             screening_id: screening.id,
             seats: selectedSeats.map((seat) => ({row: seat.seat, number: seat.row})),
-            ticket_types: Object.entries(bookings)
-                .filter(([, number]) => number > 0)
-                .map(([category, number]) => ({
+            ticket_types: Object.entries(bookings)?.filter(([, number]) => number > 0)
+                ?.map(([category, number]) => ({
                     type: mapToPostValue(category),
                     quantity: number
                 }))
