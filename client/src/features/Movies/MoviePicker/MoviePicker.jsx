@@ -95,8 +95,8 @@ export const MoviePicker = () => {
                     >
                         {movies
                             ?.filter((movie) =>
-                                movie?.screenings.some(
-                                    (screening) => screening.week_day === day
+                                movie?.screenings?.some(
+                                    (screening) => screening?.week_day === day
                                 )
                             )
                             ?.map((movie) => (
