@@ -6,15 +6,15 @@ import {useDispatch, useSelector} from "react-redux";
 import {setSelectedScreening} from "../../store/store";
 
 export const MovieContent = () => {
-    const movie = useSelector(state => state.app.movies[state.app.selectedMovie - 1]);
+    const movie = useSelector(state => state.app.movies.find(movie => movie.id === state.app.selectedMovie));
     const dispatch = useDispatch();
     const selectedScreening = useSelector((state) => state.app.selectedScreening);
     const currentDay = useSelector((state) => state.app.currentDay);
     useEffect(() => {
         dispatch(setSelectedScreening(null));
     }, [movie, dispatch]);
-
-    console.log(movie);
+    console.log(movie)
+    console.log(useSelector(state => state.app.currentDay));
     return (
         <Grid container direction="column" spacing={2}>
             <Grid item container xs={3} sm={3} md={3}>
