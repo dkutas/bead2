@@ -13,6 +13,8 @@ export const MovieContent = () => {
     useEffect(() => {
         dispatch(setSelectedScreening(null));
     }, [movie, dispatch]);
+
+    console.log(movie);
     return (
         <Grid container direction="column" spacing={2}>
             <Grid item container xs={3} sm={3} md={3}>
