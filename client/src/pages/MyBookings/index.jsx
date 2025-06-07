@@ -85,13 +85,13 @@ export default function MyBookings() {
                         <Typography sx={{color: '#A1A1AA', mb: 1}}>
                             Seats:
                         </Typography>
-                        {booking.seats.map(({row, number}) => {
+                        {booking.seats.map(({row, seat}) => {
                             return (
                                 <Typography
-                                    key={`${row}` + `${number}`}
+                                    key={`${row}` + `${seat}`}
                                     sx={{color: '#A1A1AA'}}
                                 >
-                                    {row}.sor <strong>{number}.szék</strong>
+                                    {row}.sor <strong>{seat}.szék</strong>
                                 </Typography>
                             )
                         })}
