@@ -8,6 +8,7 @@ import {createTheme, ThemeProvider} from "@mui/material";
 import {RouterProvider} from "react-router";
 import {router} from "./routes.js";
 import {AuthProvider} from "./contexts/AuthContext.jsx";
+import {SnackBarProvider} from "./contexts/SnackBarContext.jsx";
 
 const theme = createTheme({
     palette: {
@@ -22,9 +23,11 @@ createRoot(document.getElementById("root")).render(
     <StrictMode>
         <ThemeProvider theme={theme}>
             <AuthProvider>
-                <Provider store={store}>
-                    <RouterProvider router={router}/>
-                </Provider>
+                <SnackBarProvider>
+                    <Provider store={store}>
+                        <RouterProvider router={router}/>
+                    </Provider>
+                </SnackBarProvider>
             </AuthProvider>
         </ThemeProvider>
     </StrictMode>

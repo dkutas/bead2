@@ -2,10 +2,10 @@ import {Grid, Snackbar, Alert} from "@mui/material";
 import {useDispatch, useSelector} from "react-redux";
 import {resetBookings, setMovies} from "../../store/store";
 import {Dialog, Button} from "@mui/material";
-import {useState} from "react";
-import {AuthService} from "../../../services/auth.service.js";
+import {useState, useContext} from "react";
 import {ApiService} from "../../../services/api.service.js";
 import {getWeek} from "date-fns";
+import {SnackBarContext} from "../../../contexts/SnackBarContext.jsx"
 
 const Summary = ({movie, screening, needFinalize}) => {
 
@@ -16,14 +16,9 @@ const Summary = ({movie, screening, needFinalize}) => {
     const currentDay = useSelector(
         (state) => state.app.days[state.app.currentDay]
     );
+    const {setSnackbar} = useContext(SnackBarContext);
     const selectedWeek = getWeek(new Date(useSelector((state) => state.app.selectedDate)), {weekStartsOn: 1});
 
-
-    const [snackbar, setSnackbar] = useState({
-        open: false,
-        message: '',
-        severity: 'success'
-    });
 
     const mapToPostValue = (category) => {
         switch (category) {
@@ -40,9 +35,6 @@ const Summary = ({movie, screening, needFinalize}) => {
     const costs = {adult: 2500, student: 2000, pension: 1800};
     const selectedSeats = useSelector((state) => state.app.selectedSeats);
 
-    const handleSnackbarClose = () => {
-        setSnackbar({...snackbar, open: false});
-    };
 
     const finalizeBooking = async () => {
         const valueToPost = {
@@ -55,33 +47,28 @@ const Summary = ({movie, screening, needFinalize}) => {
                 }))
         };
 
-        await ApiService.getInstance().post("bookings", valueToPost).then(response => {
-            console.log(response);
-            setSnackbar({
-                open: true,
-                message: 'Foglalás sikeresen létrehozva!',
-                severity: 'success'
-            });
-        }).catch(error => {
-            console.log(error);
-            setSnackbar({
-                open: true,
-                message: 'Foglalás sikeresen létrehozva!',
-                severity: 'success'
-            });
-        })
         try {
-            await ApiService.getInstance()
-                .get(`movies/week?week_number=${selectedWeek}`)
-                .then((movies) => {
-                    dispatch(setMovies(movies));
-                });
+            await ApiService.getInstance().post("bookings", valueToPost);
+            setSnackbar({
+                open: true,
+                message: 'Foglalás sikeresen létrehozva!',
+                severity: 'success'
+            });
+            dispatch(resetBookings());
+            setOpen(false);
+
+            const movies = await ApiService.getInstance()
+                .get(`movies/week?week_number=${selectedWeek}`);
+            dispatch(setMovies(movies));
         } catch (error) {
-            console.log(error);
+            console.error("Booking failed:", error);
+            setSnackbar({
+                open: true,
+                message: 'Hiba történt a foglalás során!',
+                severity: 'error'
+            });
         }
 
-        dispatch(resetBookings());
-        setOpen(false);
     };
 
     return (
@@ -126,7 +113,6 @@ const Summary = ({movie, screening, needFinalize}) => {
                             className="px-4 py-2 rounded-lg border"
                             onClick={() => {
                                 setOpen(false);
-                                finalizeBooking();
                             }}
                         >
                             Mégsem
@@ -135,7 +121,6 @@ const Summary = ({movie, screening, needFinalize}) => {
                             className="px-4 py-2 rounded-lg bg-[#84cc16] text-black"
                             onClick={() => {
                                 finalizeBooking();
-                                setOpen(false);
                             }}
                         >
                             Foglalás
@@ -228,21 +213,6 @@ const Summary = ({movie, screening, needFinalize}) => {
                         </Grid> : null
                 }
             </Grid>
-
-            <Snackbar
-                open={snackbar.open}
-                autoHideDuration={6000}
-                onClose={handleSnackbarClose}
-                anchorOrigin={{vertical: 'top', horizontal: 'center'}}
-            >
-                <Alert
-                    onClose={handleSnackbarClose}
-                    severity={snackbar.severity}
-                    sx={{width: '100%'}}
-                >
-                    {snackbar.message}
-                </Alert>
-            </Snackbar>
         </>
     );
 };

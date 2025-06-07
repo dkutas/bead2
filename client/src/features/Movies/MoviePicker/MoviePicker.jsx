@@ -28,10 +28,12 @@ export const MoviePicker = () => {
         if (plusMinus === -1) {
             dateToSet = sub(selectedDate, {weeks: 1});
         } else {
+            selectedDate
             dateToSet = add(selectedDate, {weeks: 1});
         }
         dispatch(setSelectedDate(dateToSet.toISOString()));
     };
+
 
     return (
         <>
@@ -58,7 +60,7 @@ export const MoviePicker = () => {
                     <Button onClick={() => handleDayChange(-1)}>
                         <ChevronLeft/>
                     </Button>
-                    <div className="text-2xl">{`${getWeek(selectedDate)}. week`}</div>
+                    <div className="text-2xl">{`${getWeek(selectedDate, {weekStartsOn: 1})}. week`}</div>
                     <Button onClick={() => handleDayChange(1)}>
                         <ChevronRight/>
                     </Button>
@@ -94,10 +96,11 @@ export const MoviePicker = () => {
                         }}
                     >
                         {movies
-                            ?.filter((movie) =>
-                                movie?.screenings?.some(
-                                    (screening) => screening?.week_day === day
-                                )
+                            ?.filter((movie) => {
+                                    return movie?.screenings?.some(
+                                        (screening) => screening?.week_day === day
+                                    )
+                                }
                             )
                             ?.map((movie) => (
                                 <MovieCard key={movie.id} movie={movie}/>

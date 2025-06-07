@@ -40,7 +40,6 @@ export default function ManageFilms() {
     const handleDeleteMovie = async (movieId) => {
         if (window.confirm("Are you sure you want to delete this movie?")) {
             try {
-                console.log("Deleting movie with ID:", movieId);
                 await ApiService.getInstance().delete(`movies`, movieId);
                 fetchData();
             } catch (error) {

@@ -25,7 +25,7 @@ export class ApiService {
         if (!response.ok) {
             throw new Error(response.statusText);
         }
-        return await response.json();
+        return (await response.json()).data;
     };
 
     async getById(url, id) {

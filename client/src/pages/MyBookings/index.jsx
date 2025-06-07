@@ -21,7 +21,6 @@ export default function MyBookings() {
     );
 
     const pastBookings = myBookings.filter(booking => {
-            console.log(new Date(booking.screening.start_time));
             return new Date(booking.screening.start_time) <= new Date()
         }
     );

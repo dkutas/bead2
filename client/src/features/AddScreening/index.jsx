@@ -50,7 +50,6 @@ export default function AddScreening() {
 
     const handleChange = (e) => {
         const {name, value} = e.target;
-        console.log(name, value)
         setFormData(prev => ({...prev, [name]: value}));
         setErrors(prev => ({...prev, [name]: ""}));
     };
