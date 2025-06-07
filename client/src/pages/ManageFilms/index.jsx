@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useState, useContext} from "react";
 import {
     Button,
     Container,
@@ -15,10 +15,12 @@ import {
 import {Add as AddIcon, Delete as DeleteIcon, Edit as EditIcon} from '@mui/icons-material';
 import {ApiService} from "../../services/api.service";
 import {useNavigate} from "react-router";
+import {SnackBarContext} from "../../contexts/SnackbarContext.jsx";
 
 export default function ManageFilms() {
     const [movies, setMovies] = useState([]);
     const navigate = useNavigate();
+    const {setSnackbar} = useContext(SnackBarContext);
 
     useEffect(() => {
         fetchData();
@@ -26,12 +28,8 @@ export default function ManageFilms() {
 
     const fetchData = async () => {
         try {
-            const [moviesResponse, screeningsResponse] = await Promise.all([
-                ApiService.getInstance().get("movies"),
-                ApiService.getInstance().get("screenings")
-            ]);
+            const moviesResponse = await ApiService.getInstance().get("movies");
             setMovies(moviesResponse);
-            setScreenings(screeningsResponse);
         } catch (error) {
             console.error("Error fetching data:", error);
         }
@@ -42,8 +40,18 @@ export default function ManageFilms() {
             try {
                 await ApiService.getInstance().delete(`movies`, movieId);
                 fetchData();
+                setSnackbar({
+                    open: true,
+                    message: "Movie deleted successfully",
+                    severity: "success"
+                });
             } catch (error) {
                 console.error("Error deleting movie:", error);
+                setSnackbar({
+                    open: true,
+                    message: "Failed to delete movie",
+                    severity: "error"
+                });
             }
         }
     };
@@ -79,7 +87,7 @@ export default function ManageFilms() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {movies && movies.map((movie) => (
+                        {movies && movies?.map((movie) => (
                             <TableRow key={movie.id}>
                                 <TableCell>{movie.title}</TableCell>
                                 <TableCell>{movie.genre}</TableCell>

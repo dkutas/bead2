@@ -1,7 +1,8 @@
-import {useEffect, useState} from "react";
+import {useEffect, useState, useContext} from "react";
 import {Button, Container, MenuItem, Paper, TextField, Typography} from "@mui/material";
 import {ApiService} from "../../services/api.service.js";
 import {useLocation, useNavigate} from "react-router";
+import {SnackBarContext} from "../../contexts/SnackBarContext.jsx";
 
 export default function AddMovie() {
     const navigate = useNavigate();
@@ -16,6 +17,8 @@ export default function AddMovie() {
     const [errors, setErrors] = useState({});
     const location = useLocation();
     const movieId = +location.search.split("=")[1];
+    const {setSnackbar} = useContext(SnackBarContext);
+
 
     useEffect(() => {
         if (movieId) {
@@ -68,9 +71,19 @@ export default function AddMovie() {
             } else {
                 await ApiService.getInstance().post("movies", formData);
             }
+            setSnackbar({
+                open: true,
+                message: movieId ? "Movie updated successfully" : "Movie added successfully",
+                severity: "success"
+            })
             navigate("/manage-films");
         } catch (error) {
             console.error("Error adding movie:", error);
+            setSnackbar({
+                open: true,
+                message: "Failed to add movie",
+                severity: "error"
+            });
         }
     };
 
@@ -78,7 +91,7 @@ export default function AddMovie() {
         <Container maxWidth="sm" className="mt-8">
             <Paper elevation={3} className="p-8">
                 <Typography variant="h4" className="mb-4 text-center">
-                    Add New Movie
+                    {movieId ? "Update Movie" : "Add Movie"}
                 </Typography>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                     <TextField
@@ -235,7 +248,7 @@ export default function AddMovie() {
                             }
                         }}
                     >
-                        Add Movie
+                        {movieId ? "Update Movie" : "Add Movie"}
                     </Button>
                 </form>
             </Paper>

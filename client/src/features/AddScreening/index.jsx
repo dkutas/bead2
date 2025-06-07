@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useState, useContext} from "react";
 import {Button, Container, MenuItem, Paper, TextField, Typography} from "@mui/material";
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 import {TimePicker} from '@mui/x-date-pickers/TimePicker';
@@ -7,6 +7,7 @@ import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
 import {ApiService} from "../../services/api.service.js";
 import {useLocation, useNavigate} from "react-router";
 import dayjs from 'dayjs';
+import {SnackBarContext} from "../../contexts/SnackBarContext.jsx";
 
 export default function AddScreening() {
     const navigate = useNavigate();
@@ -14,6 +15,7 @@ export default function AddScreening() {
     const [rooms, setRooms] = useState([]);
     const location = useLocation();
     const movieId = +location.search.split("=")[1];
+    const {setSnackbar} = useContext(SnackBarContext);
     const [formData, setFormData] = useState({
         movie_id: movieId || "",
         room_id: "",
@@ -28,9 +30,27 @@ export default function AddScreening() {
             try {
                 await ApiService.getInstance().get("movies").then((response) => {
                     setMovies(response);
+                    if (movieId) {
+                        const selectedMovie = response.find(movie => movie.id === movieId);
+                        if (selectedMovie) {
+                            setFormData(prev => ({...prev, movie_id: selectedMovie.id}));
+                        } else {
+                            setSnackbar({
+                                open: true,
+                                message: "Selected movie not found",
+                                severity: "error"
+                            });
+                            navigate("/manage-films");
+                        }
+                    }
                 });
             } catch (error) {
                 console.error("Error fetching movies:", error);
+                setSnackbar({
+                    open: true,
+                    message: "Failed to fetch movies",
+                    severity: "error"
+                });
             }
         };
         const fetchRooms = async () => {
