@@ -4,7 +4,6 @@ import {useEffect} from "react";
 import classNames from "classnames";
 import {useDispatch, useSelector} from "react-redux";
 import {setSelectedScreening} from "../../store/store";
-import {getWeek} from "date-fns";
 
 export const MovieContent = () => {
     const movie = useSelector(state => state.app.movies[state.app.selectedMovie - 1]);
@@ -24,8 +23,8 @@ export const MovieContent = () => {
                             rotate: "-5.1deg",
                             border: "6.5px solid #27272A",
                         }}
-                        src={movie.image_path}
-                        alt={movie.description}
+                        src={movie?.image_path}
+                        alt={movie?.description}
                     />
                 </Grid>
                 <Grid

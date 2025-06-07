@@ -1,4 +1,4 @@
-import {Grid, Snackbar, Alert} from "@mui/material";
+import {Grid} from "@mui/material";
 import {useDispatch, useSelector} from "react-redux";
 import {resetBookings, setMovies} from "../../store/store";
 import {Dialog, Button} from "@mui/material";
