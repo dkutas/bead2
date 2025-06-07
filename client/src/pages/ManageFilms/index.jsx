@@ -15,7 +15,7 @@ import {
 import {Add as AddIcon, Delete as DeleteIcon, Edit as EditIcon} from '@mui/icons-material';
 import {ApiService} from "../../services/api.service";
 import {useNavigate} from "react-router";
-import {SnackBarContext} from "../../contexts/SnackbarContext.jsx";
+import {SnackBarContext} from "../../contexts/SnackBarContext.jsx";
 
 export default function ManageFilms() {
     const [movies, setMovies] = useState([]);
