@@ -2,15 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
-use App\Models\Screening;
-use App\Models\Room;
-use App\Models\Booking;
 use App\Http\Resources\ScreeningResource;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
+use App\Models\Screening;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class ScreeningController extends Controller
 {
@@ -20,7 +18,7 @@ class ScreeningController extends Controller
     public function index()
     {
         $screenings = Screening::with(['movie', 'room', 'bookings'])->get();
-        return ScreeningResource::collection($screenings);
+        return ApiResponse::success(ScreeningResource::collection($screenings));
     }
 
     /**
@@ -31,7 +29,7 @@ class ScreeningController extends Controller
         try {
             $request->validate([
                 'movie_id' => 'required|exists:movies,id',
-                'room_id' => 'required|exists:rooms,id',
+                'room_id' => 'exists:rooms,id',
                 'date' => 'required|date',
                 'start_time' => ['required', 'regex:/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/']
             ]);
@@ -42,36 +40,34 @@ class ScreeningController extends Controller
             $data['week_number'] = $carbonDate->weekOfYear;
             $data['week_day'] = $carbonDate->isoWeekday();
 
+            // Set default room_id if not provided
+            if (!isset($data['room_id'])) {
+                $data['room_id'] = 1; // Default to Grand Hall
+            }
+
             // Check for time conflicts in the same room (logic may need to be adapted for string time)
-            $conflictingScreenings = Screening::where('room_id', $request->room_id)
+            $conflictingScreenings = Screening::where('room_id', $data['room_id'])
                 ->where('start_time', $request->start_time)
                 ->exists();
 
             if ($conflictingScreenings) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'There is already a screening scheduled in this room at this time'
-                ], 422);
+                return ApiResponse::error(
+                    'There is already a screening scheduled in this room at this time',
+                    422);
             }
 
             $screening = Screening::create($data);
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Screening added successfully!',
-                'data' => new ScreeningResource($screening->load(['movie', 'room']))
-            ], 201);
+            return ApiResponse::success(new ScreeningResource($screening->load(['movie', 'room'])), 'OK', 201);
         } catch (ValidationException $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Screening addition failed due to validation errors',
-                'errors' => $e->errors()
-            ], 422);
+            return ApiResponse::error(
+                'Screening addition failed due to validation errors',
+                422,
+                $e->errors());
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to add screening. Please try again later.',
-                'error' => $e->getMessage()
-            ], 500);
+            return ApiResponse::error(
+                'Failed to add screening. Please try again later.',
+                500,
+                $e->getMessage());
         }
     }
 
@@ -81,7 +77,7 @@ class ScreeningController extends Controller
     public function show(Screening $screening)
     {
         $screening->load(['movie', 'room', 'bookings']);
-        return new ScreeningResource($screening);
+        return ApiResponse::success(new ScreeningResource($screening));
     }
 
     /**
@@ -110,14 +106,14 @@ class ScreeningController extends Controller
                 ->exists();
 
             if ($conflictingScreenings) {
-                return response()->json([
-                    'message' => 'There is already a screening scheduled in this room at this time'
-                ], 422);
+                return ApiResponse::error(
+                    'There is already a screening scheduled in this room at this time',
+                    422);
             }
         }
 
         $screening->update($data);
-        return new ScreeningResource($screening->load(['movie', 'room']));
+        return ApiResponse::success(new ScreeningResource($screening->load(['movie', 'room'])));
     }
 
     /**
@@ -126,6 +122,6 @@ class ScreeningController extends Controller
     public function destroy(Screening $screening)
     {
         $screening->delete();
-        return response()->json(null, 204);
+        return ApiResponse::success(null, 'OK', 204);
     }
 }
