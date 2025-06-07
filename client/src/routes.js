@@ -1,5 +1,4 @@
 import {createBrowserRouter} from "react-router";
-import App from "./App.jsx";
 import {LoginPage} from "./pages/Login/index.jsx";
 import Register from "./pages/Register/index.jsx";
 import MyBookings from "./pages/MyBookings/index.jsx";

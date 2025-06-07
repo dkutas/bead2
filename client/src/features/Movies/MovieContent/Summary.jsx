@@ -1,8 +1,7 @@
-import {Grid} from "@mui/material";
+import {Button, Dialog, Grid} from "@mui/material";
 import {useDispatch, useSelector} from "react-redux";
 import {resetBookings, setMovies} from "../../store/store";
-import {Dialog, Button} from "@mui/material";
-import {useState, useContext} from "react";
+import {useContext, useState} from "react";
 import {ApiService} from "../../../services/api.service.js";
 import {getWeek} from "date-fns";
 import {SnackBarContext} from "../../../contexts/SnackBarContext.jsx"

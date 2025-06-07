@@ -1,8 +1,7 @@
 import {useEffect, useState} from "react";
-import {TextField, Button, Container, Paper, Typography, MenuItem} from "@mui/material";
+import {Button, Container, MenuItem, Paper, TextField, Typography} from "@mui/material";
 import {ApiService} from "../../services/api.service.js";
-import {useNavigate} from "react-router";
-import {useLocation} from "react-router";
+import {useLocation, useNavigate} from "react-router";
 
 export default function AddMovie() {
     const navigate = useNavigate();

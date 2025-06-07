@@ -1,11 +1,9 @@
-import {Main} from "../../features/Movies/Main.jsx";
 import NavBar from "../../features/NavBar/Navbar.jsx";
 import {Outlet, useNavigate} from "react-router";
 import {AuthService} from "../../services/auth.service.js";
-import Movies from "../Movies/index.jsx";
-import {useEffect, useContext} from "react";
+import {useContext, useEffect} from "react";
 import {SnackBarContext} from "../../contexts/SnackBarContext.jsx";
-import {Snackbar, Alert} from "@mui/material";
+import {Alert, Snackbar} from "@mui/material";
 
 export default function Home() {
     const navigate = useNavigate();

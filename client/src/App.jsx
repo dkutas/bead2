@@ -1,5 +1,5 @@
 import "./App.css";
-import {Provider, useDispatch} from "react-redux";
+import {useDispatch} from "react-redux";
 import {ApiService} from "./services/api.service.js";
 import {setMovies} from "./features/store/store.js";
 import {RouterProvider} from "react-router";

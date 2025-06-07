@@ -1,6 +1,6 @@
 import {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {Container, Typography, Paper, Grid, Box} from "@mui/material";
+import {Box, Container, Grid, Paper, Typography} from "@mui/material";
 import {ApiService} from "../../services/api.service.js";
 import {setMyBookings} from "../../features/store/store.js";
 import dayjs from 'dayjs';

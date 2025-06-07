@@ -1,10 +1,6 @@
 import {useDispatch} from "react-redux";
-import {
-    setCurrentDay, setSelectedDate,
-    setSelectedMovie,
-    setSelectedScreening,
-} from "../store/store";
-import {format, getWeek} from "date-fns";
+import {setCurrentDay, setSelectedDate, setSelectedMovie, setSelectedScreening,} from "../store/store";
+import {format} from "date-fns";
 
 export const Navitem = ({index, classNames, day}) => {
     const dispatch = useDispatch();

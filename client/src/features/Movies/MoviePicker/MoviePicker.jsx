@@ -4,11 +4,10 @@ import {useDispatch, useSelector} from "react-redux";
 import classNames from "classnames";
 import {Navitem} from "../../NavBar/NavItem.jsx";
 import "./movieDayBar.css";
-import {getWeek, addDays, startOfWeek} from "date-fns";
+import {add, addDays, format, getWeek, startOfWeek, sub} from "date-fns";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import ChevronRight from "@mui/icons-material/ChevronRight";
 import {setSelectedDate} from "../../store/store.js";
-import {sub, add, format} from "date-fns";
 
 export const MoviePicker = () => {
     const movies = useSelector((state) => state.app.movies);
