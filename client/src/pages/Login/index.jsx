@@ -3,13 +3,15 @@ import {Button, TextField} from "@mui/material";
 import {AuthService} from "../../services/auth.service.js";
 import {useNavigate} from "react-router";
 import {useContext} from "react";
-import {AuthContext} from "../../contexts/AuthContext"; // You'll need to create this
+import {AuthContext} from "../../contexts/AuthContext";
+import {SnackBarContext} from "../../contexts/SnackBarContext.jsx"; // You'll need to create this
 
 export const LoginPage = () => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const navigate = useNavigate()
     const {setIsAuthenticated} = useContext(AuthContext); // Add this
+    const {setSnackbar} = useContext(SnackBarContext); // Add this for snackbar notifications
 
     const handleLogin = (e) => {
         e.preventDefault()
@@ -17,8 +19,18 @@ export const LoginPage = () => {
             AuthService.getInstance().login({email, password}).then(response => {
                 setIsAuthenticated(true)
                 navigate("/")
+                setSnackbar({
+                    open: true,
+                    message: "Login successful!",
+                    severity: "success"
+                });
             })
         } catch (error) {
+            setSnackbar({
+                open: true,
+                message: "Login failed. Please check your credentials.",
+                severity: "error"
+            });
             console.error("Login failed:", error);
         }
     }

@@ -3,6 +3,7 @@ import {Button, TextField} from "@mui/material";
 import {AuthService} from "../../services/auth.service.js";
 import {useNavigate} from "react-router";
 import {AuthContext} from "../../contexts/AuthContext.jsx";
+import {SnackBarContext} from "../../contexts/SnackBarContext.jsx";
 
 export default function Register() {
     const [email, setEmail] = useState("")
@@ -11,6 +12,7 @@ export default function Register() {
     const [passwordAgain, setPasswordAgain] = useState("")
     const [errors, setError] = useState([]);
     const {setIsAuthenticated} = useContext(AuthContext); // Add this
+    const {setSnackbar} = useContext(SnackBarContext); // Add this
 
 
     const navigate = useNavigate();
@@ -26,9 +28,19 @@ export default function Register() {
             }).then(() => {
                 setIsAuthenticated(true)
                 navigate("/");
+                setSnackbar({
+                    open: true,
+                    message: "Registration successful! You are now logged in.",
+                    severity: "success"
+                });
             })
         } catch (err) {
             setError(err);
+            setSnackbar({
+                open: true,
+                message: "Registration failed. Please check your input.",
+                severity: "error"
+            });
         }
     }
 
