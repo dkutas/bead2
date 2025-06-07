@@ -33,7 +33,7 @@ A fegyelmi vétség legsúlyosabb következménye a hallgató elbocsátása az e
 - [x] Admin funkciók: Film szerkesztése működik (kép nélkül) (1pt)
 - [x] Admin funkciók: Vetítés szerkesztése működik (1pt)
 - [x] Admin funkciók: Film és vetítés törlése működik (1pt)
-- [ ] Admin funkciók: Az admin visszajelzést kap a sikeres/sikertelen film/vetítés módosításokról (2pt)
+- [x] Admin funkciók: Az admin visszajelzést kap a sikeres/sikertelen film/vetítés módosításokról (2pt)
 - [ ] Mobilbarát reszponzív megjelenés, mobilnézetben is jól használható az oldal (2pt)
 
 Összesen: 30 pont (Minimum: 12 pont)
@@ -43,7 +43,7 @@ A fegyelmi vétség legsúlyosabb következménye a hallgató elbocsátása az e
 - [ ] Sötét/világos mód: Az oldalon tudunk váltani sötét/világos módra, ezt a teljes oldal kinézete leköveti (2pt)
 - [x] Modal komponens: Az admin felületen a vetítések hozzáadása és szerkesztése azonos oldalon, modal komponensben
   történik (1pt)
-- [ ] Toastok: Az alkalmazás toast üzenetekkel jelzi a következő műveleteket (2pt):
+- [x] Toastok: Az alkalmazás toast üzenetekkel jelzi a következő műveleteket (2pt):
     - Sikeres/sikertelen bejelentkezés
     - Sikeres kijelentkezés
     - Sikeres/sikertelen jegyfoglalás

@@ -96,9 +96,19 @@ export default function AddScreening() {
             };
 
             await ApiService.getInstance().post("screenings", formattedData);
+            setSnackbar({
+                open: true,
+                message: "Screening added successfully",
+                severity: "success"
+            })
             navigate("/manage-films");
         } catch (error) {
             console.error("Error adding screening:", error);
+            setSnackbar({
+                open: true,
+                message: "Failed to add screening",
+                severity: "error"
+            });
         }
     };
     return (
